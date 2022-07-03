@@ -24,18 +24,32 @@
     </head>
 
     <body class="hack dark main container">
+        {% set lang_base_url = get_url(path="", lang=lang) %}
         {% block content %}
             {% block header %}
-                {% if config.extra.after_dark_menu %}
+                {% if config.extra.after_dark_menu or config.extra.after_dark_langs %}
                     <header>
                         <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
-                        {% for item in config.extra.after_dark_menu %}
-                            <a itemprop="url"
-                               class="{% if item.url | replace(from="$BASE_URL", to=config.base_url) == current_url %}active{% endif %}"
-                               href="{{ item.url | safe | replace(from="$BASE_URL", to=config.base_url) }}">
-                                <span itemprop="name">{{ item.name }}
-                                </span></a>
-                        {% endfor %}
+                            {% if config.extra.after_dark_langs %}
+                                <div style="float: right">
+                                {% for item in config.extra.after_dark_langs %}
+                                    <a itemprop="url"
+                                       class="navbar {% if item.url | replace(from="$BASE_URL", to=config.base_url) | replace(from="$LANG_BASE_URL", to=lang_base_url) == current_url %}active{% endif %}"
+                                       href="{{ item.url | safe | replace(from="$BASE_URL", to=config.base_url) | replace(from="$LANG_BASE_URL", to=lang_base_url) }}">
+                                        <span itemprop="name">{% if item.trans_key %}{{ trans(key=item.trans_key, lang=lang) }}{% else %}{{ item.name }}{% endif %}</span></a>
+                                {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if config.extra.after_dark_menu %}
+                                <div>
+                                {% for item in config.extra.after_dark_menu %}
+                                    <a itemprop="url"
+                                       class="navbar {% if item.url | replace(from="$BASE_URL", to=config.base_url) | replace(from="$LANG_BASE_URL", to=lang_base_url) == current_url %}active{% endif %}"
+                                       href="{{ item.url | safe | replace(from="$BASE_URL", to=config.base_url) | replace(from="$LANG_BASE_URL", to=lang_base_url) }}">
+                                        <span itemprop="name">{% if item.trans_key %}{{ trans(key=item.trans_key, lang=lang) }}{% else %}{{ item.name }}{% endif %}</span></a>
+                                {% endfor %}
+                                </div>
+                            {% endif %}
                         </nav>
                     </header>
                 {% endif %}
